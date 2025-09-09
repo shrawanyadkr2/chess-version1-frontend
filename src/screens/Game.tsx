@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 import { useSocket } from "../hooks/useSocket";
 import { useEffect, useState } from "react";
 import { Chess } from "chess.js";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 // move together here is the code repetation
 export const Init_GAME = "init_game";
@@ -45,6 +47,10 @@ export const Game = () => {
         }
     }, [socket])
 
+    useEffect(() => {
+        AOS.init({ duration: 1000, once: true });
+    }, []);
+
     if (!socket) return <div className="text-white text-xl flex justify-center items-center min-h-screen">Connecting......</div>
 
     return (
@@ -53,12 +59,18 @@ export const Game = () => {
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-8 w-full">
 
                     {/* Chessboard Section */}
-                    <div className="md:col-span-4 w-full flex justify-center items-center bg-black/30 rounded-2xl shadow-2xl p-6 backdrop-blur-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-shadow">
+                    <div 
+                        className="md:col-span-4 w-full flex justify-center items-center bg-black/30 rounded-2xl shadow-2xl p-6 backdrop-blur-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-shadow"
+                        data-aos="zoom-in"
+                    >
                         <ChessBoard board={board} />
                     </div>
 
                     {/* Sidebar Section */}
-                    <div className="md:col-span-2 w-full bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] rounded-2xl shadow-xl p-8 flex flex-col items-center justify-between text-center">
+                    <div 
+                        className="md:col-span-2 w-full bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] rounded-2xl shadow-xl p-8 flex flex-col items-center justify-between text-center"
+                        data-aos="fade-left"
+                    >
                         <h2 className="text-3xl font-extrabold mb-8 drop-shadow-lg tracking-wide">
                             welcome in room
                         </h2>
