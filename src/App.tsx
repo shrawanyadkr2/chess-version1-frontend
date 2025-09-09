@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-      <div className='h-screen bg-[rgba(135,95,78,1)]'>
+     
         <BrowserRouter>
           <Routes>
 
@@ -18,7 +18,7 @@ function App() {
 
           </Routes>
         </BrowserRouter>
-      </div>
+      
     </>
   )
 }
