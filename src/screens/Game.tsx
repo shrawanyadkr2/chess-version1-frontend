@@ -10,11 +10,10 @@ export const Init_GAME = "init_game";
 export const MOVE = "move"
 export const GAME_OVER = "game_over"
 
-
 export const Game = () => {
     const navigate = useNavigate();
 
-    const [chess,setChess] = useState(new Chess())
+    const [chess, setChess] = useState(new Chess())
     const [board, setBoard] = useState(chess.board())
 
     const socket = useSocket();
@@ -45,22 +44,38 @@ export const Game = () => {
             }
         }
     }, [socket])
-    if (!socket) return <div>Connecting......</div>
+
+    if (!socket) return <div className="text-white text-xl flex justify-center items-center min-h-screen">Connecting......</div>
+
     return (
-        <div className="justify-center flex">
-            <div className="pt-8 max-w-screen-lg w-full">
-                <div className="grid grid-cols-6 gap-4 w-full bg-red-400">
-                    <div className="col-span-4 bg-red-200 w-full">
+        <div className="justify-center flex min-h-screen bg-gradient-to-r from-[#2C3E50] via-[#1C2B3A] to-[#0A121D] text-white">
+            <div className="pt-10 max-w-screen-xl w-full px-6">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-8 w-full">
+
+                    {/* Chessboard Section */}
+                    <div className="md:col-span-4 w-full flex justify-center items-center bg-black/30 rounded-2xl shadow-2xl p-6 backdrop-blur-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-shadow">
                         <ChessBoard board={board} />
                     </div>
-                    <div className="col-span-2 bg-green-200 w-full">
 
-                        <Button onClick={() => {
-                            socket.send(JSON.stringify({
-                                type: Init_GAME
-                            }))
-                        }}>paly</Button>
+                    {/* Sidebar Section */}
+                    <div className="md:col-span-2 w-full bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] rounded-2xl shadow-xl p-8 flex flex-col items-center justify-between text-center">
+                        <h2 className="text-3xl font-extrabold mb-8 drop-shadow-lg tracking-wide">
+                            welcome in room
+                        </h2>
 
+                        <Button
+                            onClick={() => {
+                                socket.send(JSON.stringify({
+                                    type: Init_GAME
+                                }))
+                            }} 
+                        >
+                            Play
+                        </Button>
+
+                        <div className="mt-10 text-sm text-gray-200 opacity-90 italic">
+                            Waiting for opponent...
+                        </div>
                     </div>
                 </div>
             </div>
