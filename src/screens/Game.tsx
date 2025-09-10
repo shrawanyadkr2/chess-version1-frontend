@@ -15,7 +15,7 @@ export const Game = () => {
   const navigate = useNavigate();
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
-  const [started , setStarted] = useState(false)
+  const [started, setStarted] = useState(false);
   const socket = useSocket();
 
   useEffect(() => {
@@ -28,9 +28,9 @@ export const Game = () => {
       switch (message.type) {
         case Init_GAME: {
           const newGame = new Chess();
-          
+          setChess(newGame);              // ✅ reset game instance
           setBoard(newGame.board());
-          setStarted(true)
+          setStarted(true);
           console.log("game initialized");
           break;
         }
@@ -46,7 +46,7 @@ export const Game = () => {
           break;
       }
     };
-  }, [socket, chess]);
+  }, [socket, chess]); // ✅ keep dependencies, chess now updates correctly
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: true });
@@ -68,7 +68,12 @@ export const Game = () => {
             className="md:col-span-4 w-full flex justify-center items-center bg-black/30 rounded-2xl shadow-2xl p-6 backdrop-blur-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-shadow"
             data-aos="zoom-in"
           >
-            <ChessBoard chess={chess} setBoard={setBoard} board={board} socket={socket} />
+            <ChessBoard
+              chess={chess}
+              setBoard={setBoard}
+              board={board}
+              socket={socket}
+            />
           </div>
 
           {/* Sidebar Section */}
@@ -79,14 +84,15 @@ export const Game = () => {
             <h2 className="text-3xl font-extrabold mb-8 drop-shadow-lg tracking-wide">
               Welcome to the room
             </h2>
-            {!started &&
-            <Button
-              onClick={() => {
-                socket.send(JSON.stringify({ type: Init_GAME }));
-              }}
-            >
-              Play
-            </Button>}
+            {!started && (
+              <Button
+                onClick={() => {
+                  socket.send(JSON.stringify({ type: Init_GAME }));
+                }}
+              >
+                Play
+              </Button>
+            )}
             <div className="mt-10 text-sm text-gray-200 opacity-90 italic">
               Waiting for opponent...
             </div>

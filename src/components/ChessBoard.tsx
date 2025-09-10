@@ -1,4 +1,4 @@
-import { Chess, type Color, type PieceSymbol, type Square } from "chess.js";
+import { type Color, type PieceSymbol, type Square } from "chess.js";
 import { useState } from "react";
 import { MOVE } from "../screens/Game";
 
@@ -23,30 +23,34 @@ export const ChessBoard = ({ chess, board, socket, setBoard }: {
               <div
                 key={j}
                 onClick={() => {
-                  const squareRepresentation = String.fromCharCode(97 + (j % 8)) + (8 - i) as Square;
+                  const squareRepresentation =
+                    (String.fromCharCode(97 + (j % 8)) + (8 - i)) as Square;
 
                   if (!from) {
                     setFrom(squareRepresentation);
                   } else {
-                    socket.send(JSON.stringify({
-                      type: MOVE,
-                      payload: {
-                        move: {
-                          from,
-                          to: squareRepresentation
-
-                        }
-
-                      }
-                    }));
-
-                    chess.move({
+                    // Try move locally
+                    const move = {
                       from,
-                      to: squareRepresentation
-                    });
+                      to: squareRepresentation,
+                    };
 
-                    setBoard(chess.board());
-                    console.log({ from, to: squareRepresentation });
+                    const result = chess.move(move);
+
+                    if (result) {
+                      // ✅ valid move → update board & send to server
+                      setBoard(chess.board());
+                      socket.send(
+                        JSON.stringify({
+                          type: MOVE,
+                          payload: move,
+                        })
+                      );
+                      console.log("Move made:", move);
+                    } else {
+                      console.warn("Invalid move:", move);
+                    }
+
                     setFrom(null);
                   }
                 }}
@@ -70,4 +74,4 @@ export const ChessBoard = ({ chess, board, socket, setBoard }: {
       ))}
     </div>
   );
-}; 
+};
