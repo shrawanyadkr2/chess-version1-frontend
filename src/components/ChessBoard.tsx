@@ -60,12 +60,13 @@ export const ChessBoard = ({ chess, board, socket, setBoard }: {
                 `}
               >
                 {square ? (
-                  <span
-                    className={`text-xl sm:text-2xl md:text-3xl font-bold 
-                      ${square.color === "w" ? "text-white" : "text-black"}`}
-                  >
-                    {square.type.toUpperCase()}
-                  </span>
+                  <img
+                    className="w-6 sm:w-8 md:w-10 lg:w-12"
+                    src={`/${square.color === "b"
+                      ? square.type
+                      : square.type.toUpperCase()}-copy.png`}
+                    alt={square.type}
+                  />
                 ) : null}
               </div>
             );
