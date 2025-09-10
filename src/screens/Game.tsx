@@ -1,6 +1,5 @@
 import { ChessBoard } from "../components/ChessBoard";
 import { Button } from "../components/Button";
-import { useNavigate } from "react-router-dom";
 import { useSocket } from "../hooks/useSocket";
 import { useEffect, useState } from "react";
 import { Chess } from "chess.js";
@@ -12,7 +11,6 @@ export const MOVE = "move";
 export const GAME_OVER = "game_over";
 
 export const Game = () => {
-  const navigate = useNavigate();
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
   const [started, setStarted] = useState(false);
