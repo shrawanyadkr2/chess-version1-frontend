@@ -1,36 +1,73 @@
-import type { Color, PieceSymbol, Square } from "chess.js";
+import { Chess, type Color, type PieceSymbol, type Square } from "chess.js";
+import { useState } from "react";
+import { MOVE } from "../screens/Game";
 
-export const ChessBoard = ({ board }: {
+export const ChessBoard = ({ chess, board, socket, setBoard }: {
+  setBoard: any;
+  chess: any;
   board: ({
     square: Square;
     type: PieceSymbol;
     color: Color;
-  } | null)[][]
+  } | null)[][];
+  socket: WebSocket;
 }) => {
+  const [from, setFrom] = useState<Square | null>(null);
+
   return (
     <div className="inline-block rounded-lg overflow-hidden shadow-2xl cursor-pointer">
       {board.map((row, i) => (
         <div key={i} className="flex">
-          {row.map((square, j) => (
-            <div
-              key={j}
-              className={`flex items-center justify-center 
-                w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16
-                ${(i + j) % 2 === 0 ? "bg-[#769656]" : "bg-[#eeeed2]"}
-              `}
-            >
-              {square ? (
-                <span
-                  className={`text-xl sm:text-2xl md:text-3xl font-bold 
-                    ${square.color === "w" ? "text-white" : "text-black"}`}
-                >
-                  {square.type.toUpperCase()}
-                </span>
-              ) : null}
-            </div>
-          ))}
+          {row.map((square, j) => {
+            return (
+              <div
+                key={j}
+                onClick={() => {
+                  const squareRepresentation = String.fromCharCode(97 + (j % 8)) + (8 - i) as Square;
+
+                  if (!from) {
+                    setFrom(squareRepresentation);
+                  } else {
+                    socket.send(JSON.stringify({
+                      type: MOVE,
+                      payload: {
+                        move: {
+                          from,
+                          to: squareRepresentation
+
+                        }
+
+                      }
+                    }));
+
+                    chess.move({
+                      from,
+                      to: squareRepresentation
+                    });
+
+                    setBoard(chess.board());
+                    console.log({ from, to: squareRepresentation });
+                    setFrom(null);
+                  }
+                }}
+                className={`flex items-center justify-center 
+                  w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16
+                  ${(i + j) % 2 === 0 ? "bg-[#769656]" : "bg-[#eeeed2]"}
+                `}
+              >
+                {square ? (
+                  <span
+                    className={`text-xl sm:text-2xl md:text-3xl font-bold 
+                      ${square.color === "w" ? "text-white" : "text-black"}`}
+                  >
+                    {square.type.toUpperCase()}
+                  </span>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       ))}
     </div>
   );
-};
+}; 
