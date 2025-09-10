@@ -26,17 +26,23 @@ export const Game = () => {
       switch (message.type) {
         case Init_GAME: {
           const newGame = new Chess();
-          setChess(newGame);              // ✅ reset game instance
+          setChess(newGame);
           setBoard(newGame.board());
           setStarted(true);
-          console.log("game initialized");
+          console.log("Game initialized");
           break;
         }
         case MOVE: {
           const move = message.payload;
-          chess.move(move);
-          setBoard(chess.board());
-          console.log("Move made");
+          const newChess = new Chess(chess.fen()); // clone current chess state
+          const result = newChess.move(move);
+          if (result) {
+            setChess(newChess);
+            setBoard(newChess.board());
+            console.log("Move made");
+          } else {
+            console.log("Invalid move");
+          }
           break;
         }
         case GAME_OVER:
@@ -44,7 +50,7 @@ export const Game = () => {
           break;
       }
     };
-  }, [socket, chess]); // ✅ keep dependencies, chess now updates correctly
+  }, [socket, chess]);
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: true });
@@ -66,12 +72,7 @@ export const Game = () => {
             className="md:col-span-4 w-full flex justify-center items-center bg-black/30 rounded-2xl shadow-2xl p-6 backdrop-blur-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-shadow"
             data-aos="zoom-in"
           >
-            <ChessBoard
-              chess={chess}
-              setBoard={setBoard}
-              board={board}
-              socket={socket}
-            />
+            <ChessBoard chess={chess} setBoard={setBoard} board={board} socket={socket} />
           </div>
 
           {/* Sidebar Section */}
@@ -82,6 +83,20 @@ export const Game = () => {
             <h2 className="text-3xl font-extrabold mb-8 drop-shadow-lg tracking-wide">
               Welcome to the room
             </h2>
+            <ul className="space-y-3 text-gray-200 text-lg">
+              <li className="flex items-center gap-2 hover:scale-110 transition-transform duration-200 ease-in-out select-none">
+                <span className="text-green-400">✔</span> Always starts from white
+              </li>
+              <li className="flex items-center gap-2 hover:scale-110 transition-transform duration-200 ease-in-out select-none">
+                <span className="text-green-400">✔</span> Cannot move wrong position
+              </li>
+              <li className="flex items-center gap-2 hover:scale-110 transition-transform duration-200 ease-in-out select-none">
+                <span className="text-green-400">✔</span> Cannot move opponent’s piece
+              </li>
+              <li className="flex items-center gap-2 hover:scale-110 transition-transform duration-200 ease-in-out select-none">
+                <span className="text-green-400">✔</span> Shows messages for invalid moves, check, and checkmate
+              </li>
+            </ul>
             {!started && (
               <Button
                 onClick={() => {

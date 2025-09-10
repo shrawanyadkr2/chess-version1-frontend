@@ -60,8 +60,8 @@ export const ChessBoard = ({ chess, board, socket, setBoard }: {
                 `}
               >
                 {square ? (
-  <img
-    className="w-6 sm:w-8 md:w-9 lg:w-10
+                  <img
+                    className="w-6 sm:w-8 md:w-9 lg:w-10
                mx-auto 
                drop-shadow-md 
                hover:scale-110 
@@ -69,12 +69,12 @@ export const ChessBoard = ({ chess, board, socket, setBoard }: {
                duration-200 
                ease-in-out 
                select-none"
-    src={`/${square.color === "b"
-      ? square.type.toLowerCase() + ".png"
-      : square.type.toUpperCase() + " copy.png"}`}
-    alt={square.type}
-  />
-) : null}
+                    src={`/${square.color === "b"
+                      ? square.type.toLowerCase() + ".png"
+                      : square.type.toUpperCase() + " copy.png"}`}
+                    alt={square.type}
+                  />
+                ) : null}
 
 
 
